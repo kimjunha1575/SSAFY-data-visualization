@@ -5,6 +5,7 @@ const morgan = require("morgan");
 const axios = require("axios");
 const dotenv = require("dotenv");
 const fs = require("fs");
+const e = require("express");
 dotenv.config();
 
 const PORT = 8081;
@@ -30,11 +31,14 @@ app.post("/data", async (req, res) => {
       "X-Naver-Client-Secret": process.env.CLIENT_SECRET,
       "Content-Type": "application/json",
     };
+    const { startDate, endDate, timeUnit, devide, gender, keywordGroups } = req.body;
     const request_body = {
-      startDate: req.body.startDate,
-      endDate: req.body.endDate,
-      timeUnit: req.body.timeUnit,
-      keywordGroups: req.body.keywordGroups,
+      startDate: startDate,
+      endDate: endDate,
+      timeUnit: timeUnit,
+      devide: devide === "all" ? "" : devide,
+      gender: gender === "all" ? "" : gender,
+      keywordGroups: keywordGroups,
     };
 
     const response = await axios.post(url, request_body, { headers });
@@ -60,4 +64,39 @@ app.get("/data", (req, res) => {
   });
 });
 
+app.delete("/data", (req, res) => {
+  try {
+    // 파일 삭제
+    fs.unlink("./uploads/chart.json", (error) => {
+      if (error) return res.json(error);
+    });
+    return res.json({
+      delete: true,
+    });
+  } catch {
+    return res.json(error);
+  }
+});
+
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+const tmp = 
+{
+  "startDate": "2022-06-01",
+  "endDate": "2022-08-01",
+  "timeUnit": "month",
+  "keywordGroups": [
+    {
+      "groupName": "코로나",
+      "keywords": ["코로나", "covid", "백신", "거리두기"],
+    },
+    {
+      "groupName": "금리",
+      "keywords": ["금리", "빅스텝", "파월"],
+    },
+    {
+      "groupName": "누리호",
+      "keywords": ["누리호", "항우연"],
+    },
+  ],
+};

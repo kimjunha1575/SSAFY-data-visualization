@@ -13,6 +13,7 @@
     "pinia": "^2.1.6",
     "vue": "^3.3.4",
     "vue-chart.js": "^0.2.0",
+    "vue-chartjs": "^5.2.0",
     "vue-router": "^4.2.4"
   },
   "devDependencies": {
